@@ -17,63 +17,98 @@ namespace test
     class Scenario
     {
         public static object ScenarioID { get; private set; }
-
+        public static MongoClient client =
+            new MongoClient(
+                "mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
         private static void Main(string[] args)
         {
-            Console.WriteLine("1. SaveScheduleActual      args:- Count, is seq, is parallel");
-            Console.WriteLine("2. GETScheduleActualwithoutjoin ");
-            Console.WriteLine("3. GETScheduleActual ");
-            Console.WriteLine("4. UPDActualMovement ");
-            Console.WriteLine("5. DELScheduleActual ");
-            Console.WriteLine("6. GETScheduleActualpagination args :- pageSize");
-            Console.WriteLine("7. ReadWriteScheduleActual args:- Count, is seq, is parallel"); 
-            int input = Convert.ToInt32(args[0]);
-           // int input = Convert.ToInt32(Console.ReadLine());
 
+            Console.WriteLine(" args:- 1.Count, 2.is seq, 3.is parallel 4. PageSize");
 
-            switch (input)
+            //Console.WriteLine("1. SaveScheduleActual      args:- Count, is seq, is parallel");
+            //Console.WriteLine("2. GETScheduleActualwithoutjoin ");
+            //Console.WriteLine("3. GETScheduleActual ");
+            //Console.WriteLine("4. UPDActualMovement ");
+            //Console.WriteLine("5. DELScheduleActual ");
+            //Console.WriteLine("6. GETScheduleActualpagination args :- pageSize");
+            //Console.WriteLine("7. ReadWriteScheduleActual args:- Count, is seq, is parallel");
+            //int input = Convert.ToInt32(args[0]);
+            List<Tuple<double, double, double, double, double, double, double>> observation =
+                new List<Tuple<double, double, double, double, double, double, double>>();
+            var inputList = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+            Console.WriteLine("Running 5 times.........................");
+            for (int i = 0; i < 5; i++)
             {
-                case 1:
-                    int count = Convert.ToInt32(args[1]);
-                    bool isSeq= Convert.ToBoolean(args[2]);
-                    bool isParallel = Convert.ToBoolean(args[3]);
+                double res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0, res6 = 0, res7 = 0;
+                for (int j = 0; j < inputList.Count; j++)
+                {
+                    var input = inputList[j];
+                    ; switch (input)
+                    {
+                        case 1:
+                            int count = Convert.ToInt32(args[0]);
+                            bool isSeq = Convert.ToBoolean(args[1]);
+                            bool isParallel = Convert.ToBoolean(args[2]);
 
-                    Console.WriteLine("Calling SAVEScheduleActual");
-                    SAVEScheduleActual("C:\\output\\Maintenance.json", count,isSeq,isParallel); ;
-                    break;
-                case 2:
-                    Console.WriteLine("Calling GETScheduleActualwithoutjoin");
-                    GETScheduleActualwithoutjoin();
-                    break;
-                case 3:
-                    Console.WriteLine("Calling GETScheduleActual");
-                    GETScheduleActual();
-                    break;
-                case 4:
-                    Console.WriteLine("Calling UPDActualMovement");
-                    UPDActualMovement();
-                    break;
-                case 5:
-                    Console.WriteLine("Calling DELScheduleActual");
-                    DELScheduleActual();
-                    break;
-                case 6:
-                    int pageSize = Convert.ToInt32(args[1]);
+                            Console.WriteLine("Calling SAVEScheduleActual");
+                            res1 = SAVEScheduleActual("C:\\output\\Maintenance.json", count, isSeq, isParallel);
 
-                    Console.WriteLine("Calling GETScheduleActualpagination");
-                    GETScheduleActualpagination(pageSize);
-                    break;
-                case 7:
-                    int count1 = Convert.ToInt32(args[1]);
-                    bool isSeq1 = Convert.ToBoolean(args[2]);
-                    bool isParallel1 = Convert.ToBoolean(args[3]);
-                    Console.WriteLine("Calling ReadWriteScheduleActual");
-                    ReadWriteScheduleActual("C:\\output\\Maintenance.json", count1,isSeq1,isParallel1); 
-                    break;
+                            break;
+                        case 2:
+                            Console.WriteLine("Calling GETScheduleActualwithoutjoin");
+                            res2 = GETScheduleActualwithoutjoin();
+                            break;
+                        case 3:
+                            Console.WriteLine("Calling GETScheduleActual");
+                            res3 = GETScheduleActual();
+                            break;
+                        case 4:
+                            Console.WriteLine("Calling UPDActualMovement");
+                            res4 = UPDActualMovement();
+                            break;
+                        case 5:
+                            Console.WriteLine("Calling DELScheduleActual");
+                            res5 = DELScheduleActual();
+                            break;
+                        case 6:
+                            int pageSize = Convert.ToInt32(args[1]);
 
-                default: 
-                    break;
+                            Console.WriteLine("Calling GETScheduleActualpagination");
+                            res6 = GETScheduleActualpagination(pageSize);
+                            break;
+                        case 7:
+                            int count1 = Convert.ToInt32(args[0]);
+                            bool isSeq1 = Convert.ToBoolean(args[1]);
+                            bool isParallel1 = Convert.ToBoolean(args[2]);
+                            Console.WriteLine("Calling ReadWriteScheduleActual");
+                            res7 = ReadWriteScheduleActual("C:\\output\\Maintenance.json", count1, isSeq1, isParallel1);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    var r = Tuple.Create(res1, res2, res3, res4, res5, res6, res7);
+                    observation.Add(r);
+                }
             }
+
+            Console.WriteLine("Best out of 5 run by a single client is :");
+            Console.WriteLine("---------------------------------------------------------");
+            Console.WriteLine();
+            Console.WriteLine();
+
+            Console.WriteLine("1. SaveScheduleActual " +observation.Select(x=>x.Item1).Min());
+            Console.WriteLine("2. GETScheduleActualwithoutjoin " + observation.Select(x => x.Item2).Min());
+            Console.WriteLine("3. GETScheduleActual " + observation.Select(x => x.Item3).Min());
+            Console.WriteLine("4. UPDActualMovement " + observation.Select(x => x.Item4).Min());
+            Console.WriteLine("5. DELScheduleActual " + observation.Select(x => x.Item5).Min());
+            Console.WriteLine("6. GETScheduleActualpagination " + observation.Select(x => x.Item6).Min());
+            Console.WriteLine("7. ReadWriteScheduleActual " + observation.Select(x => x.Item7).Min());
+
+
+
+
 
         }
 
@@ -97,68 +132,77 @@ namespace test
         //    };
         //    mapping.InsertOne(docmapping);
         //}
-        private static void SAVEScheduleActual(string path, int count, bool seq, bool parallel)
+        private static double SAVEScheduleActual(string path, int count, bool seq, bool parallel)
         {
-            MongoClient client =
-                new MongoClient(
-                    "mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
-            IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
-
-            var collection = db.GetCollection<BsonDocument>("ScheduleActual");
-
-
-            string contents = File.ReadAllText(path);
-
-
-            var stopWatch = new Stopwatch();
-            var doc = BsonDocument.Parse(contents);
-            List<BsonDocument> data = new List<BsonDocument>();
-            for (int i = 1; i <= count; i++)
+            try
             {
-                BsonDocument pf1 = doc.DeepClone().AsBsonDocument;
-                data.Add(pf1);
-            }
 
-            stopWatch.Start();
+                IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
-            if (!seq)
-                collection.InsertManyAsync(data).Wait();
-            else
-            {
-                if (parallel)
+                var collection = db.GetCollection<BsonDocument>("ScheduleActual");
+
+
+                string contents = File.ReadAllText(path);
+
+
+                var stopWatch = new Stopwatch();
+                var doc = BsonDocument.Parse(contents);
+                List<BsonDocument> data = new List<BsonDocument>();
+                for (int i = 1; i <= count; i++)
                 {
-                    data.ParallelForEachAsync(
-                        async item =>
-                        {
-                            try
-                            {
-                                await collection.InsertOneAsync(item);
-
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }).Wait();
+                    BsonDocument pf1 = doc.DeepClone().AsBsonDocument;
+                    data.Add(pf1);
                 }
+
+                stopWatch.Start();
+
+                if (!seq)
+                    collection.InsertManyAsync(data).Wait();
                 else
                 {
-                    for (int i = 1; i <= count; i++)
+                    if (parallel)
                     {
-                        collection.InsertOne(data[i]);
-                    }
-                }
+                        data.ParallelForEachAsync(
+                            async item =>
+                            {
+                                try
+                                {
+                                    await collection.InsertOneAsync(item);
 
-                //collection.InsertMany//Async(records).Wait();
-                stopWatch.Stop();
-                Console.WriteLine($"Time elapsed in milliseconds to write {stopWatch.Elapsed.TotalMilliseconds}");
-                Console.Read();
+                                }
+                                catch (Exception ex)
+                                {
+                                }
+                            }).Wait();
+                    }
+                    else
+                    {
+                        for (int i = 1; i <= count; i++)
+                        {
+                            collection.InsertOne(data[i]);
+                        }
+                    }
+
+                    //collection.InsertMany//Async(records).Wait();
+                    stopWatch.Stop();
+                    Console.WriteLine($"Time elapsed in milliseconds to write {stopWatch.Elapsed.TotalMilliseconds}");
+                    return stopWatch.Elapsed.TotalMilliseconds;
+                    //Console.Read();
+                }
             }
+            catch (Exception e1)
+            {
+                Console.WriteLine(e1);
+            }
+
+            return 0;
         }
 
-        private static void ReadWriteScheduleActual(string path, int count, bool seq, bool parallel)
+        private static double ReadWriteScheduleActual(string path, int count, bool seq, bool parallel)
         {
-            SAVEScheduleActual(path, count, seq, parallel);
-            GETScheduleActual();
+            var sa = SAVEScheduleActual(path, count, seq, parallel);
+            var sa1 = GETScheduleActual();
+            return sa + sa1;
         }
 
         //String ScheduleID;
@@ -175,7 +219,7 @@ namespace test
         //Console.Write("enter StopTime: ");
         //StopTime = Convert.ToInt32(Console.ReadLine());
 
-        private static void GETScheduleActual()
+        private static double GETScheduleActual()
         {
             MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
@@ -183,14 +227,14 @@ namespace test
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            
+
             var lookup = new BsonDocument("$lookup",
                              new BsonDocument("from", "MaintenanceType")
                                          .Add("localField", "maintenancetypeid")
                                          .Add("foreignField", "maintenancetypeid")
                                          .Add("as", "ScheduleActualCollection"));
-           
-            var match = new BsonDocument("$match", new BsonDocument("maintenancetypeid",1));
+
+            var match = new BsonDocument("$match", new BsonDocument("maintenancetypeid", 1));
 
             var pipeline = new[] { match, lookup };
             var option = new AggregateOptions() { AllowDiskUse = true };
@@ -198,17 +242,17 @@ namespace test
             stopWatch.Stop();
 
             int countOfRead = 0;
-            while (ddTask.MoveNext())
+            var enumerator = ddTask.ToEnumerable().GetEnumerator();
+            while (enumerator.MoveNext())
             {
                 countOfRead++;
             }
             Console.WriteLine($"Record count is  {countOfRead}");
             Console.WriteLine($"Time elapsed in milliseconds to read {stopWatch.Elapsed.TotalMilliseconds}");
-            Console.Read();
-
+            return stopWatch.Elapsed.TotalMilliseconds;
         }
 
-        private static void GETScheduleActualwithoutjoin()
+        private static double GETScheduleActualwithoutjoin()
         {
             MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
@@ -218,7 +262,7 @@ namespace test
             stopWatch.Start();
 
             var filter = Builders<BsonDocument>.Filter.Eq("maintenancetypeid", 1);
-            var res=collection.FindAsync(filter).Result;
+            var res = collection.FindAsync(filter).Result;
             stopWatch.Stop();
 
             int countOfRead = 0;
@@ -229,10 +273,10 @@ namespace test
             Console.WriteLine($"Record count is  {countOfRead}");
 
             Console.WriteLine($"Time elapsed in milliseconds to read {stopWatch.Elapsed.TotalMilliseconds}");
-            Console.Read();
+            return stopWatch.Elapsed.TotalMilliseconds;
         }
 
-        private static void GETScheduleActualpagination(int pageSize)
+        private static double GETScheduleActualpagination(int pageSize)
         {
             MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
@@ -249,9 +293,9 @@ namespace test
             while (true)
             {
                 dCount = data.Count;
-                var res=collection.Find(filter).Skip((page - 1) * pageSize).Limit(pageSize);
-                data.AddRange(res.ToListAsync().Result);
-                if(dCount==data.Count)
+                var res = collection.Find(filter).Skip((page - 1) * pageSize).Limit(pageSize).ToListAsync().Result;
+                data.AddRange(res);
+                if (dCount == data.Count || res.Count < pageSize)
                     break;
                 page++;
             }
@@ -259,10 +303,10 @@ namespace test
             Console.WriteLine($"Record count is  {dCount}");
 
             Console.WriteLine($"Time elapsed in milliseconds to read {stopWatch.Elapsed.TotalMilliseconds}");
-            Console.Read();
+            return stopWatch.Elapsed.TotalMilliseconds;
 
         }
-        private static void UPDActualMovement()
+        private static double UPDActualMovement()
         {
             MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
@@ -275,16 +319,16 @@ namespace test
 
             var update = Builders<BsonDocument>.Update.Set("maintenancetypeid", 0);
 
-            var updateTask=collection.UpdateManyAsync(filter, update);
+            var updateTask = collection.UpdateManyAsync(filter, update);
             updateTask.Wait(CancellationToken.None);
             stopWatch.Stop();
             var uResult = updateTask.Result.IsAcknowledged ? updateTask.Result.ModifiedCount : 0;
             Console.WriteLine($"Updated count is  {uResult}");
 
             Console.WriteLine($"Time elapsed in milliseconds to write {stopWatch.Elapsed.TotalMilliseconds}");
-            Console.Read();
+            return stopWatch.Elapsed.TotalMilliseconds;
         }
-        private static void DELScheduleActual()
+        private static double DELScheduleActual()
         {
             MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
@@ -304,7 +348,7 @@ namespace test
             var dResult = delTask.Result.IsAcknowledged ? delTask.Result.DeletedCount : 0;
             Console.WriteLine($"Updated count is  {dResult}");
             Console.WriteLine($"Time elapsed in milliseconds to delete {stopWatch.Elapsed.TotalMilliseconds}");
-            Console.Read();
+            return stopWatch.Elapsed.TotalMilliseconds;
         }
 
         //private static void DELScheduleStatus()
@@ -1042,4 +1086,4 @@ namespace test
         //    collection.InsertOne(doc);
         //}
     }
- }
+}
