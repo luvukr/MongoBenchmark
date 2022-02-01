@@ -35,7 +35,7 @@ namespace test
             //int input = Convert.ToInt32(args[0]);
             List<Tuple<double, double, double, double, double, double, double>> observation =
                 new List<Tuple<double, double, double, double, double, double, double>>();
-            var inputList = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+            var inputList = new List<int>() { 1, 2, 3, 6, 4, 5, 7 }; 
             Console.WriteLine("Running 5 times.........................");
             for (int i = 0; i < 5; i++)
             {
@@ -93,18 +93,20 @@ namespace test
                 }
             }
 
-            Console.WriteLine("Best out of 5 run by a single client is :");
+            Console.WriteLine("Best and worst out of 5 run by a single client is :");
             Console.WriteLine("---------------------------------------------------------");
             Console.WriteLine();
             Console.WriteLine();
+            Console.WriteLine("Operation                        Min            |           Max            ");
+            Console.WriteLine("---------------------------------------------------------");
 
-            Console.WriteLine("1. SaveScheduleActual " +observation.Select(x=>x.Item1).Min());
-            Console.WriteLine("2. GETScheduleActualwithoutjoin " + observation.Select(x => x.Item2).Min());
-            Console.WriteLine("3. GETScheduleActual " + observation.Select(x => x.Item3).Min());
-            Console.WriteLine("4. UPDActualMovement " + observation.Select(x => x.Item4).Min());
-            Console.WriteLine("5. DELScheduleActual " + observation.Select(x => x.Item5).Min());
-            Console.WriteLine("6. GETScheduleActualpagination " + observation.Select(x => x.Item6).Min());
-            Console.WriteLine("7. ReadWriteScheduleActual " + observation.Select(x => x.Item7).Min());
+            Console.WriteLine("1. SaveScheduleActual " +observation.Select(x=>x.Item1).Min() + "          |        " + observation.Select(x => x.Item1).Max());
+            Console.WriteLine("2. GETScheduleActualwithoutjoin " + observation.Select(x => x.Item2).Min() + "          |        " + observation.Select(x => x.Item2).Max());
+            Console.WriteLine("3. GETScheduleActual " + observation.Select(x => x.Item3).Min() + "          |        " + observation.Select(x => x.Item3).Max());
+            Console.WriteLine("4. UPDActualMovement " + observation.Select(x => x.Item4).Min() + "          |        " + observation.Select(x => x.Item4).Max());
+            Console.WriteLine("5. DELScheduleActual " + observation.Select(x => x.Item5).Min() + "          |        " + observation.Select(x => x.Item5).Max());
+            Console.WriteLine("6. GETScheduleActualpagination " + observation.Select(x => x.Item6).Min() + "          |        " + observation.Select(x => x.Item6).Max());
+            Console.WriteLine("7. ReadWriteScheduleActual " + observation.Select(x => x.Item7).Min() + "          |        " + observation.Select(x => x.Item7).Max());
 
 
 
@@ -202,6 +204,7 @@ namespace test
         {
             var sa = SAVEScheduleActual(path, count, seq, parallel);
             var sa1 = GETScheduleActual();
+            DropCollection();
             return sa + sa1;
         }
 
@@ -346,7 +349,12 @@ namespace test
             return stopWatch.Elapsed.TotalMilliseconds;
         }
 
-        
+        private static void DropCollection()
+        {
+            IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
+
+            db.DropCollection("ScheduleActual");
+        }
         //private static void DELScheduleStatus()
         //{
         //    MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
