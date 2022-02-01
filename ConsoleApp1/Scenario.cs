@@ -71,7 +71,7 @@ namespace test
                             res5 = DELScheduleActual();
                             break;
                         case 6:
-                            int pageSize = Convert.ToInt32(args[1]);
+                            int pageSize = Convert.ToInt32(args[3]);
 
                             Console.WriteLine("Calling GETScheduleActualpagination");
                             res6 = GETScheduleActualpagination(pageSize);
@@ -221,7 +221,6 @@ namespace test
 
         private static double GETScheduleActual()
         {
-            MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
@@ -254,7 +253,6 @@ namespace test
 
         private static double GETScheduleActualwithoutjoin()
         {
-            MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
@@ -278,7 +276,6 @@ namespace test
 
         private static double GETScheduleActualpagination(int pageSize)
         {
-            MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
@@ -308,7 +305,6 @@ namespace test
         }
         private static double UPDActualMovement()
         {
-            MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
@@ -330,7 +326,6 @@ namespace test
         }
         private static double DELScheduleActual()
         {
-            MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
             IMongoDatabase db = client.GetDatabase("Schedule_Dummy");
 
             var collection = db.GetCollection<BsonDocument>("ScheduleActual");
@@ -351,6 +346,7 @@ namespace test
             return stopWatch.Elapsed.TotalMilliseconds;
         }
 
+        
         //private static void DELScheduleStatus()
         //{
         //    MongoClient client = new MongoClient("mongodb://RailmaxWeb:Op5K4HM1A6or@dcxrmxpoc04:27017,dcxrmxpoc05:27017,dcxrmxpoc06:27017/admin?replicaSet=MainReplicaSet&ssl=false");
